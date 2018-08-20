@@ -19,7 +19,6 @@
     "jimp": "^0.2.28",
     "joi": "^6.5.0",
     "jsonwebtoken": "^5.0.4",
-    "knox": "git://github.com/caremerge/knox.git#b1e031c209b3c17cab622a458e87728c1ee88cbd",
     "lodash": "^4.17.4",
     "md5": "^2.0.0",
     "moment": "^2.17.1",
