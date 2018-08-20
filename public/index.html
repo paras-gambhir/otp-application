@@ -1,0 +1,381 @@
+<html ng-app="otpApplication">
+
+<head>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="https://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-datatables/0.6.2/angular-datatables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+</head>
+
+<style type="text/css">
+    /* Datatable */
+
+    table tr th {
+        background: #337ab7;
+        color: white;
+        text-align: left;
+        vertical-align: center;
+    }
+
+    .pagination>.active>a,
+    .pagination>.active>a:focus,
+    .pagination>.active>a:hover,
+    .pagination>.active>span,
+    .pagination>.active>span:focus,
+    .pagination>.active>span:hover {
+        background-color: #a49c82;
+        border-color: #a49c82;
+    }
+
+    table.dataTable thead>tr>th.sorting_asc,
+    table.dataTable thead>tr>th.sorting_desc,
+    table.dataTable thead>tr>th.sorting,
+    table.dataTable thead>tr>td.sorting_asc,
+    table.dataTable thead>tr>td.sorting_desc,
+    table.dataTable thead>tr>td.sorting {
+        width: 20%;
+    }
+
+    tr {
+        height: 30px;
+    }
+
+    .table>tbody>tr>td,
+    .table>tbody>tr>th,
+    .table>tfoot>tr>td,
+    .table>tfoot>tr>th,
+    .table>thead>tr>td,
+    .table>thead>tr>th {
+        vertical-align: middle;
+    }
+
+    table thead tr th {
+        width: 20% !important;
+    }
+
+    table thead tr {
+        background: #dad6cb;
+        border: 1px solid #d3d3d3;
+    }
+
+    .even {
+        background-color: #eee;
+    }
+
+    .table-font {
+        font-size: 15px;
+    }
+
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:after {
+        position: absolute;
+        bottom: 3px;
+        right: 8px;
+        display: block;
+        font-family: 'Glyphicons Halflings';
+        opacity: 0.5;
+    }
+
+
+    /* Body */
+
+    .hidden {
+        display: none;
+    }
+
+    .navbar-default {
+        background-color: #f8f8f8;
+        border-color: #e7e7e7;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    .navbar-default .navbar-nav>.active>a,
+    .navbar-default .navbar-nav>.active>a:focus,
+    .navbar-default .navbar-nav>.active>a:hover {
+        color: #B95B3B !important;
+        background-color: #e7e7e7;
+    }
+
+    .lia-body .lia-content a,
+    .lia-body .lia-content a:link,
+    .lia-body .lia-content a:visited,
+    .lia-body .lia-content a:hover,
+    .lia-body .lia-content a:active,
+    .lia-body .lia-content a:focus {
+        color: #555;
+    }
+
+    .connector-title {
+        color: #B95B3B;
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 18px;
+        font-family: "Arial";
+    }
+
+    .text-padding-left {
+        padding-left: 5px !important;
+    }
+
+    .dataTables_length>label {
+        float: left;
+    }
+
+    .dataTables_length>select {
+        float: right;
+        width: 45% !important;
+    }
+
+    .tab-heading {
+        font-size: 200%;
+        font-family: 'museo-sans', 'Lucida Grande', 'Lucida Sans Unicode', 'Nimbus Sans L', Arial, sans-serif;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+        box-sizing: border-box;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .create-elements {
+        border: 0px;
+        /*border-bottom: 0.5px solid #d3d3d3;*/
+        -webkit-box-shadow: 0px !important;
+        box-shadow: 0px !important;
+    }
+
+    .loader {
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+        margin: auto;
+        margin-top: 60px;
+    }
+</style>
+
+<body ng-controller="otpController">
+    <div class="container-fluid connector-title" href="">OTP Sending Application</div>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="#contacts" ng-click="getContacts()" id="nav-home-tab" data-toggle="tab">Contacts</a>
+                </li>
+                <li>
+                    <a href="#messages" ng-click="getMessages()" data-toggle="tab" style="width: 100%;">Messages</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div ng-show="loadingFull" style="height: 460px; opacity: 0.8">
+        <div class="loader"></div>
+    </div>
+
+    <div class="tab-content">
+
+        <div class="container tab-pane fade active in" style="width: 100%" aria-labelledby="nav-home-tab" id="contacts">
+
+            <div ng-show="!contactDetailsShown" style="background-color: #fff">
+                <table width="100%" cellspacing="0" border="1" id="contactsTable" datatable="ng" dt-options="dtOptions" dt-instance="dtInstance"
+                    class="table table-hover table-stripped">
+                    <thead>
+                        <tr>
+                            <td>Contact Name</td>
+                            <td>Country Code</td>
+                            <td>Phone Number</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="contact in contacts ">
+                            <td>
+                                <a href="#contactDetails" ng-click="$event.preventDefault();contactDetails(contact)">{{contact.firstName}} {{contact.lastName}}</a>
+                            </td>
+                            <td>{{contact.countryCode}}</td>
+                            <td>{{contact.phoneNumber}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div ng-show="contactDetailsShown">
+
+                <div class="row">
+
+                    <div class="col-lg-12 col-md-12 ">
+                        <button class="btn btn-primary" ng-click="getContacts();">Back to Contacts</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-6">
+
+                        <h3>Contact Details</h3>
+                        <div class="form-group">
+                            <label>Contact Name :</label>
+                            {{contactDetail.firstName}} {{contactDetail.lastName}}
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number :</label>
+                            {{contactDetail.countrycode}}{{contactDetail.phoneNumber}}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-6">
+                        <h3>Send Message</h3>
+                        <form>
+                        <div class="form-group">
+                            <label for="description"> Message</label>
+                            <textarea class="form-control" id="description" placeholder="Enter Your Message" ng-model="textMessage" required></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary" ng-click="sendMessage();" ng-disabled="!textMessage">
+                                <i class="fa fa-paper-plane" aria-hidden="true" ></i> Send Message</button>
+                                
+                        </div>
+                    </form>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="container tab-pane fade" style="width: 100%" id="messages">
+
+            <div style="background-color: #fff">
+                <table width="100%" cellspacing="0" border="1" id="messagesDatatable" datatable="ng" dt-options="dtOptions" dt-instance="dtInstance"
+                    class="table table-hover table-stripped">
+                    <thead>
+                        <tr>
+                            <td>Contact Name</td>
+                            <td>Message Body</td>
+                            <td>Time Sent</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="message in messages | orderBy : '-insertedAt'">
+                            <td> {{message.userId.firstName}} {{message.userId.lastName}}</td>
+                            <td>{{message.text}}</td>
+                            <td>{{message.insertedAt | date:'medium'}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <script type="text/javascript">
+        'use strict';
+
+
+        var otpApplication = angular.module('otpApplication', ['datatables']);
+        otpApplication.controller('otpController', otpController);
+
+
+
+        function otpController($scope, $http, $timeout, $compile, DTOptionsBuilder) {
+
+
+            $scope.loadingFull = true;
+            $scope.contacts = [];
+            $scope.messages = [];
+            $scope.contactDetailsShown = false;
+            $scope.contactDetail = {};
+            $scope.textMessage = '';
+
+
+            $http({
+                method: "GET",
+                url: "http://localhost:8000/api/admin/listContacts"
+            }).then(function mySuccess(response) {
+               
+                $scope.contacts = response.data;
+                $scope.loadingFull = false;
+
+            }, function myError(response) {
+                $scope.contacts = [];
+                $scope.loadingFull = false;
+            });
+
+
+            $scope.getContacts = function () {
+                $scope.contactDetailsShown = false;
+                $http({
+                    method: "GET",
+                    url: "http://localhost:8000/api/admin/listContacts"
+                }).then(function mySuccess(response) {
+                   
+                    $scope.contacts = response.data;
+                    $scope.loadingFull = false;
+                }, function myError(response) {
+                    $scope.contacts = [];
+                });
+
+            }
+
+
+            $scope.getMessages = function () {
+                // $scope.loadingFull = true;
+                $http({
+                    method: "GET",
+                    url: "http://localhost:8000/api/admin/listMessages"
+                }).then(function mySuccess(response) {
+                   
+                    $scope.messages = response.data;
+                    $scope.loadingFull = false;
+                }, function myError(response) {
+                    $scope.messages = [];
+                });
+
+            }
+
+            $scope.contactDetails = function (contact) {
+
+                $scope.contactDetail = contact;
+                $scope.contactDetailsShown = true;
+
+            }
+
+            $scope.sendMessage = function(){
+
+               $http({
+                    method: "POST",
+                    data:{
+                      contactId: $scope.contactDetail._id,
+                      message: $scope.textMessage
+                    },
+                    url: "http://localhost:8000/api/admin/sendMessage"
+                }).then(function mySuccess(response) {
+                    $scope.textMessage = "";
+                
+                }, function myError(response) {
+                    
+                });
+
+            }
+
+        }
+
+    </script>
+</body>
+
+</html>
